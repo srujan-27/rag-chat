@@ -16,23 +16,17 @@ A RAG (Retrieval-Augmented Generation) app that lets you upload PDF documents an
 
 ```
 
-PDF Upload → PyPDF (extract text)
+1\. PDF Upload → PyPDF (extract text per page)
 
-&#x20;          → RecursiveCharacterTextSplitter (1000 char chunks, 200 overlap)
+2\. Text Splitting → RecursiveCharacterTextSplitter (1000 char chunks, 200 overlap)
 
-&#x20;          → OpenAI Embeddings (text-embedding-ada-002)
+3\. Embedding → OpenAI text-embedding-ada-002 (text → 1536-dim vectors)
 
-&#x20;          → ChromaDB (vector store)
+4\. Storage → ChromaDB (vector store)
 
+5\. Query → Same embedding model → Cosine similarity search → Top 4 chunks
 
-
-User Question → OpenAI Embeddings (same model)
-
-&#x20;             → Chroma similarity search (top 4 chunks)
-
-&#x20;             → Prompt template (context + question)
-
-&#x20;             → GPT-4o-mini → Answer with source citations
+6\. Answer → Prompt template (context + question) → GPT-4o-mini → Cited answer
 
 ```
 
