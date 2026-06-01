@@ -122,5 +122,5 @@ streamlit run app.py
 
 
 
-Built in \~4 hours as a learn-by-building project to understand RAG pipelines, vector embeddings, and LangChain.
+ building project to understand RAG pipelines, vector embeddings, and LangChain.
 
