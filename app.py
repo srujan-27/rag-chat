@@ -1,5 +1,6 @@
 import os
 import tempfile
+import uuid
 import streamlit as st
 from dotenv import load_dotenv
 load_dotenv()
@@ -12,8 +13,8 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 
 # --- Page config ---
-st.set_page_config(page_title="Chat with your PDFs", page_icon="📄")
-st.title("📄 Chat with your PDFs")
+st.set_page_config(page_title="Chat with your PDFs", page_icon="")
+st.title(" Chat with your PDFs")
 
 # --- Sidebar: file uploader ---
 with st.sidebar:
@@ -24,6 +25,9 @@ with st.sidebar:
     process_btn = st.button("Process documents", type="primary")
 
 # --- Initialize session state ---
+import uuid
+if "session_id" not in st.session_state:
+    st.session_state.session_id = str(uuid.uuid4())
 if "chain" not in st.session_state:
     st.session_state.chain = None
 if "messages" not in st.session_state:
@@ -53,7 +57,11 @@ if process_btn and uploaded_files:
             os.unlink(tmp_path)  # clean up temp file
 
         # Build vector store
-        db = Chroma.from_documents(all_chunks, OpenAIEmbeddings())
+        db = Chroma.from_documents(
+            all_chunks,
+            OpenAIEmbeddings(),
+            collection_name=f"session_{st.session_state.session_id}"
+        )
         retriever = db.as_retriever(search_kwargs={"k": 4})
 
         # Build prompt
@@ -118,7 +126,7 @@ if question := st.chat_input("Ask a question about your documents"):
 
             # Show source chunks in an expander
             if hasattr(st.session_state, "last_sources"):
-                with st.expander("📚 View source passages"):
+                with st.expander(" View source passages"):
                     for i, doc in enumerate(st.session_state.last_sources):
                         st.caption(
                             f"**Source {i+1}** — {doc.metadata['source']}, "
